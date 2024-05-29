@@ -1,5 +1,6 @@
 package vn.fpt.diamond_shop.config;
 
+import vn.fpt.diamond_shop.security.model.RoleEnum;
 import vn.fpt.diamond_shop.security.oauth2.CustomOAuth2UserService;
 import vn.fpt.diamond_shop.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import vn.fpt.diamond_shop.security.oauth2.OAuth2AuthenticationFailureHandler;
@@ -93,6 +94,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new RestAuthenticationEntryPoint())
                 .and()
                 .authorizeRequests()
+                .antMatchers("/social/google").permitAll()
                 .antMatchers("/",
                         "/error",
                         "/favicon.ico",
@@ -104,8 +106,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.css",
                         "/**/*.js")
                 .permitAll()
-                .antMatchers("/shop/auth/**", "/oauth2/**")
+                .antMatchers("/shop/admin/**").hasRole(RoleEnum.ADMIN.name())
+                .antMatchers("/cart/**").hasRole(RoleEnum.END_USER.name())
+                .antMatchers("/**", "/oauth2/**")
                 .permitAll()
+                .antMatchers("/test")
+                .authenticated()
                 .anyRequest()
                 .authenticated()
                 .and()

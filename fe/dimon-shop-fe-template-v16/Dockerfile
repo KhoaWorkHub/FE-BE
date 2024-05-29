@@ -1,13 +1,10 @@
-FROM node:latest
-
-WORKDIR /usr/src/app
-
-COPY . /usr/src/app
-
-RUN npm install -g @angular/cli
-
+# stage 1
+FROM node:latest as node
+WORKDIR /app
+COPY . .
 RUN npm install --force
+RUN npm run build 
 
-RUN npm run build
-
-ENTRYPOINT ["ng", "serve"]
+# stage 2
+FROM nginx:alpine
+COPY --from=node /app/dist/lte-angular /usr/share/nginx/html
